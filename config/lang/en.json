@@ -32,13 +32,18 @@
   "complete": "The game is already over!",
   "draw": "Draw!",
   "unavailable": "Only the session creator can select the game parameters.",
-  "select_size": "You have selected the board size",
-  "size_already_selected": "You have already selected this board size",
-  "mode_already_selected": "This game mode is already selected.",
-  "select_mode": "You have selected the game mode",
+  "board_size": "Board Size",
+  "game_mode": "Game Mode",
+  "select": "You selected",
+  "already_selected": "You have already selected this",
   "mode_0": "Standard",
   "mode_1": "Recursive",
   "mode_2": "No draws",
+  "description": "Description",
+  "description_0_3": "To win, you need to line up 3 symbols in a row.",
+  "description_0": "To win, you need to line up 4 symbols in a row.",
+  "description_1": "\nFun mode)))\nTo win, you need to line up 4 symbols in any way.",
+  "description_2": "\n3 symbols in a row - 1 point.\n4 symbols in a row - instant win.\nIn case of a tie, points are counted.",
   "inline_title": "Play Tic-Tac-Toe!"
 }
 
