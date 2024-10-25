@@ -1,7 +1,7 @@
 from config import logging_config
 logging = logging_config.setup_logging(__name__)
 
-def check_winner(board, board_size, game_mode, session_id, x_points, o_points, save_points, combos):
+def check_winner(board, board_size, game_mode, random_mode, session_id, x_points, o_points, save_points, combos):
     if board_size == 3:
         win_length = 3
     elif board_size in [5, 7]:
@@ -15,7 +15,7 @@ def check_winner(board, board_size, game_mode, session_id, x_points, o_points, s
                 return board[combo[0]], combo
         return None, None
 
-    if game_mode == 0 or game_mode == 2:
+    if game_mode == 0 or game_mode == 2: #Standart
         winning_combinations = []
 
         for i in range(board_size):
@@ -39,35 +39,61 @@ def check_winner(board, board_size, game_mode, session_id, x_points, o_points, s
             if winner:
                 return winner, winning_combo
 
-    if game_mode == 1:
-        def is_valid(x, y):
-            return 0 <= x < board_size and 0 <= y < board_size
+    if game_mode == 1 or game_mode == 3: #Random
+        if random_mode == 0:
+            winning_combinations = []
+            for i in range(board_size - 1):
+                for j in range(board_size - 1):
+                    combo = [i * board_size + j, i * board_size + j + 1,
+                             (i + 1) * board_size + j, (i + 1) * board_size + j + 1]
+                    winning_combinations.append(combo)
+            winner, winning_combo = check_combinations(winning_combinations)
+            if winner:
+                return winner, winning_combo
 
-        def check_recursive(x, y, symbol, visited):
-            if len(visited) == win_length:
-                return True, visited
-            directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1)]
-            for dx, dy in directions:
-                nx, ny = x + dx, y + dy
-                if is_valid(nx, ny) and (nx, ny) not in visited and board[nx * board_size + ny] == symbol:
-                    result, path = check_recursive(nx, ny, symbol, visited | {(nx, ny)})
-                    if result:
-                        return True, path
-            return False, visited
+        elif random_mode == 1:
+            winning_combinations = []
+            for i in range(board_size - 1):
+                for j in range(board_size - 1):
+                    winning_combinations.extend([
+                        [i * board_size + j, i * board_size + j + 1, (i + 1) * board_size + j],
+                        [i * board_size + j, i * board_size + j + 1, (i + 1) * board_size + j + 1],
+                        [(i + 1) * board_size + j, i * board_size + j, (i + 1) * board_size + j + 1],
+                        [(i + 1) * board_size + j + 1, i * board_size + j + 1, (i + 1) * board_size + j]
+                    ])
+            winner, winning_combo = check_combinations(winning_combinations)
+            if winner:
+                return winner, winning_combo
 
-        for i in range(board_size):
-            for j in range(board_size):
-                if board[i * board_size + j] != " ":
-                    symbol = board[i * board_size + j]
-                    result, winning_combo = check_recursive(i, j, symbol, {(i, j)})
-                    if result:
-                        return symbol, [(x * board_size + y) for x, y in winning_combo]
+        elif random_mode == 2:
+            winning_combinations = []
+            for i in range(1, board_size - 1):
+                for j in range(1, board_size - 1):
+                    winning_combinations.extend([
+                        [i * board_size + j - 1, i * board_size + j, i * board_size + j + 1, (i - 1) * board_size + j],
+                        [i * board_size + j - 1, i * board_size + j, i * board_size + j + 1, (i + 1) * board_size + j],
+                        [(i - 1) * board_size + j, i * board_size + j, (i + 1) * board_size + j, i * board_size + j + 1],
+                        [(i - 1) * board_size + j, i * board_size + j, (i + 1) * board_size + j, i * board_size + j - 1]
+                    ])
+                for j in range(1, board_size - 1):
+                    winning_combinations.append([j - 1, j, j + 1, board_size + j])
+                    winning_combinations.append([(board_size - 2) * board_size + j, (board_size - 1) * board_size + j,
+                                                 (board_size - 1) * board_size + j - 1, (board_size - 1) * board_size + j + 1])
 
-    if game_mode == 0 or game_mode == 1:
+                for i in range(1, board_size - 1):
+                    winning_combinations.append([(i - 1) * board_size, i * board_size, (i + 1) * board_size, i * board_size + 1])
+                    winning_combinations.append([(i - 1) * board_size + board_size - 1, i * board_size + board_size - 1,
+                                                 (i + 1) * board_size + board_size - 1, i * board_size + board_size - 2]) 
+
+            winner, winning_combo = check_combinations(winning_combinations)
+            if winner:
+                return winner, winning_combo
+
+    if game_mode == 0 or game_mode == 1: #Draws
         if all(cell != " " for cell in board):
             return "draw", None
 
-    if game_mode == 2:
+    if game_mode == 2 or game_mode == 3: #No draws
         point_combinations = []
         scored_combinations = combos
 
