@@ -26,7 +26,7 @@ async def move_ttt(client, callback_query, session, position: int, session_id: s
     board = board_states[session_id]
     board_size = session.get("board_size", 3)
     game_mode = session.get("game_mode", 0)
-    winner, combo = check_winner(board, board_size=board_size, game_mode=game_mode, session_id=session_id, x_points=session["x_points"], o_points=session["o_points"], save_points=save_points, combos=session.get("combos", []))
+    winner, combo = check_winner(board, board_size=board_size, game_mode=game_mode, random_mode=session["random_mode"], session_id=session_id, x_points=session["x_points"], o_points=session["o_points"], save_points=save_points, combos=session.get("combos", []))
     logging.debug(f"Session {session_id}: Check winner: {winner}")
     
     if winner == "X":
