@@ -40,7 +40,7 @@ def check_winner(board, board_size, game_mode, random_mode, session_id, x_points
                 return winner, winning_combo
 
     if game_mode == 1 or game_mode == 3: #Random
-        if random_mode == 0:
+        if random_mode == 0: #cube
             winning_combinations = []
             for i in range(board_size - 1):
                 for j in range(board_size - 1):
@@ -51,7 +51,7 @@ def check_winner(board, board_size, game_mode, random_mode, session_id, x_points
             if winner:
                 return winner, winning_combo
 
-        elif random_mode == 1:
+        elif random_mode == 1: #corner
             winning_combinations = []
             for i in range(board_size - 1):
                 for j in range(board_size - 1):
@@ -65,7 +65,7 @@ def check_winner(board, board_size, game_mode, random_mode, session_id, x_points
             if winner:
                 return winner, winning_combo
 
-        elif random_mode == 2:
+        elif random_mode == 2: #T
             winning_combinations = []
             for i in range(1, board_size - 1):
                 for j in range(1, board_size - 1):
@@ -85,6 +85,40 @@ def check_winner(board, board_size, game_mode, random_mode, session_id, x_points
                     winning_combinations.append([(i - 1) * board_size + board_size - 1, i * board_size + board_size - 1,
                                                  (i + 1) * board_size + board_size - 1, i * board_size + board_size - 2]) 
 
+            winner, winning_combo = check_combinations(winning_combinations)
+            if winner:
+                return winner, winning_combo
+
+        elif random_mode == 3: #+
+            winning_combinations = []
+            for i in range(1, board_size - 1):
+                for j in range(1, board_size - 1):
+                    combo = [
+                        i * board_size + j,
+                        (i - 1) * board_size + j,
+                        (i + 1) * board_size + j,
+                        i * board_size + (j - 1),
+                        i * board_size + (j + 1)
+                    ]
+                    winning_combinations.append(combo)
+            
+            winner, winning_combo = check_combinations(winning_combinations)
+            if winner:
+                return winner, winning_combo
+
+        elif random_mode == 4: #X
+            winning_combinations = []
+            for i in range(1, board_size - 1):
+                for j in range(1, board_size - 1):
+                    combo = [
+                        i * board_size + j,
+                        (i - 1) * board_size + (j - 1),
+                        (i - 1) * board_size + (j + 1),
+                        (i + 1) * board_size + (j - 1),
+                        (i + 1) * board_size + (j + 1)
+                    ]
+                    winning_combinations.append(combo)
+            
             winner, winning_combo = check_combinations(winning_combinations)
             if winner:
                 return winner, winning_combo
