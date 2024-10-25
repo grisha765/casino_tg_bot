@@ -129,10 +129,12 @@ async def join_ttt_o(session_id, sessions, client, callback_query, get_translati
         if sessions[session_id]["message_id"] == None:
             sessions[session_id]["message_id"] = callback_query.inline_message_id
         logging.debug(f"Session {session_id}: Join game: {sessions[session_id]['o']['name']}")
+        logging.debug(f"Session {session_id}: game mode set: {sessions[session_id]["game_mode"]}")
         initialize_ttt_board(session_id, board_size=sessions[session_id]["board_size"])
 
         if sessions[session_id]["game_mode"] == 1 or sessions[session_id]["game_mode"] == 3:
             sessions[session_id]["random_mode"] = random.choice([0, 3, 4])
+            logging.debug(f"Session {session_id}: random mode set: {sessions[session_id]["random_mode"]}")
 
         logging.debug(f"Session {session_id}: initialize board {sessions[session_id]["board_size"]}")
         if sessions[session_id]["chat_id"] == None:
