@@ -27,6 +27,8 @@ async def send_ttt_board(session_id, client, session, get_translation, current_p
     game_mode_msg = f"{get_translation(session['lang'], f'game_mode')}: {get_translation(session['lang'], f'mode_{game_mode}')}"
     if game_mode == 0 and board_size == 3:
         description = get_translation(session['lang'], f'description_{game_mode}_{board_size}')
+    elif game_mode == 1 or game_mode == 3:
+        description = get_translation(session['lang'], f'random_mode_{session["random_mode"]}')
     else:
         description = get_translation(session['lang'], f'description_{game_mode}')
     
@@ -45,11 +47,11 @@ async def send_ttt_board(session_id, client, session, get_translation, current_p
             o_player = f"@{session['o']['name']}" + (f" <== {get_translation(session['lang'], 'win')}" if winner == "O" else "")
 
 
-    x_points = session["x_points"] if session["game_mode"] == 2 else ""
-    o_points = session["o_points"] if session["game_mode"] == 2 else ""
+    x_points = session["x_points"] if session["game_mode"] == 2 or session["game_mode"] == 3 else ""
+    o_points = session["o_points"] if session["game_mode"] == 2 or session["game_mode"] == 3 else ""
 
-    x_display = f"{get_translation(session['lang'], 'x')} - {x_points}: {x_player}" if session["game_mode"] == 2 else f"{get_translation(session['lang'], 'x')}: {x_player}"
-    o_display = f"{get_translation(session['lang'], 'o')} - {o_points}: {o_player}" if session["game_mode"] == 2 else f"{get_translation(session['lang'], 'o')}: {o_player}"
+    x_display = f"{get_translation(session['lang'], 'x')} - {x_points}: {x_player}" if session["game_mode"] == 2 or session["game_mode"] == 3 else f"{get_translation(session['lang'], 'x')}: {x_player}"
+    o_display = f"{get_translation(session['lang'], 'o')} - {o_points}: {o_player}" if session["game_mode"] == 2 or session["game_mode"] == 3 else f"{get_translation(session['lang'], 'o')}: {o_player}"
     if session["chat_id"] == None:
         await client.edit_inline_text(
             inline_message_id=session["message_id"],
