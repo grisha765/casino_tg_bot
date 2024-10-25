@@ -37,13 +37,15 @@
   "select": "You selected",
   "already_selected": "You have already selected this",
   "mode_0": "Standard",
-  "mode_1": "Recursive",
+  "mode_1": "Random",
   "mode_2": "No draws",
   "description": "Description",
   "description_0_3": "To win, you need to line up 3 symbols in a row.",
   "description_0": "To win, you need to line up 4 symbols in a row.",
   "description_1": "\nFun mode)))\nTo win, you need to line up 4 symbols in any way.",
   "description_2": "\n3 symbols in a row - 1 point.\n4 symbols in a row - instant win.\nIn case of a tie, points are counted.",
+  "random_mode_0": "To win, you need to build a cube.\n❌❌\n❌❌",
+  "random_mode_1": "To win, you need to build a corner in any direction.\n❌❌\n❌",
+  "random_mode_2": "To win, you need to build the letter 'T' in any direction.\n❌❌❌\n✖️❌✖️",
   "inline_title": "Play Tic-Tac-Toe!"
 }
-
