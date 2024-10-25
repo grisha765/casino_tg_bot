@@ -33,6 +33,10 @@ async def update_buttons(client, session_id, session, message, selected_size, se
             InlineKeyboardButton(
                 f"{'>>' if selected_mode == 2 else ''}{get_translation(session["lang"], "mode_2")}{'<<' if selected_mode == 2 else ''}", 
                 callback_data=f"game_mode_2_{session_id}"
+            ),
+            InlineKeyboardButton(
+                f"{'>>' if selected_mode == 3 else ''}{get_translation(session["lang"], "mode_1")[:4]}. {get_translation(session["lang"], "mode_2").lower()}{'<<' if selected_mode == 3 else ''}", 
+                callback_data=f"game_mode_3_{session_id}"
             )
         ]
     else:
@@ -102,7 +106,7 @@ async def ttt_start(session_id, sessions, message, get_translation):
         sessions[session_id]["message_id"] = msg.id
         return sessions[session_id]["x"]["id"], sessions[session_id]["x"]["name"], msg.id
 
-async def join_ttt_o(session_id, sessions, client, callback_query, get_translation, session_cleanup_tasks):
+async def join_ttt_o(session_id, sessions, client, callback_query, get_translation, session_cleanup_tasks, random):
     user = callback_query.from_user
     if sessions.get(session_id) == None:
         await callback_query.answer(get_translation(callback_query.from_user.language_code, 'complete'))
@@ -126,6 +130,10 @@ async def join_ttt_o(session_id, sessions, client, callback_query, get_translati
             sessions[session_id]["message_id"] = callback_query.inline_message_id
         logging.debug(f"Session {session_id}: Join game: {sessions[session_id]['o']['name']}")
         initialize_ttt_board(session_id, board_size=sessions[session_id]["board_size"])
+
+        if sessions[session_id]["game_mode"] == 1 or sessions[session_id]["game_mode"] == 3:
+            sessions[session_id]["random_mode"] = random.randint(0, 2)
+
         logging.debug(f"Session {session_id}: initialize board {sessions[session_id]["board_size"]}")
         if sessions[session_id]["chat_id"] == None:
             await client.edit_inline_text(
