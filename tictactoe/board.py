@@ -29,6 +29,9 @@ async def send_ttt_board(session_id, client, session, get_translation, current_p
         description = get_translation(session['lang'], f'description_{game_mode}_{board_size}')
     elif game_mode == 1 or game_mode == 3:
         description = get_translation(session['lang'], f'random_mode_{session["random_mode"]}')
+        if game_mode == 3:
+            g2 = get_translation(session['lang'], f'description_2').split('\n')
+            description = f"{'\n'.join([g2[0], g2[1], g2[3]])}\n{description}"
     else:
         description = get_translation(session['lang'], f'description_{game_mode}')
     
