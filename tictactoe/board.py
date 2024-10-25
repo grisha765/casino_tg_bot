@@ -12,6 +12,7 @@ def del_ttt_board(session_id):
 async def send_ttt_board(session_id, client, session, get_translation, current_player=None, winner=None, winning_combo=None):
     board = board_states[session_id]
     board_size = session["board_size"]
+    game_mode = session["game_mode"]
     
     buttons = []
     for i in range(board_size * board_size):
@@ -21,6 +22,13 @@ async def send_ttt_board(session_id, client, session, get_translation, current_p
         buttons.append(InlineKeyboardButton(symbol, callback_data=f"{session_id}_{i}"))
     
     keyboard = InlineKeyboardMarkup([buttons[i:i+board_size] for i in range(0, len(buttons), board_size)])
+
+    board_size_msg = f"{get_translation(session['lang'], f'board_size')}: {board_size}x{board_size}"
+    game_mode_msg = f"{get_translation(session['lang'], f'game_mode')}: {get_translation(session['lang'], f'mode_{game_mode}')}"
+    if game_mode == 0 and board_size == 3:
+        description = get_translation(session['lang'], f'description_{game_mode}_{board_size}')
+    else:
+        description = get_translation(session['lang'], f'description_{game_mode}')
     
     if current_player is not None:
         x_player = f"@{session['x']['name']}" + (" <==" if current_player == "❌" else "")
@@ -45,14 +53,14 @@ async def send_ttt_board(session_id, client, session, get_translation, current_p
     if session["chat_id"] == None:
         await client.edit_inline_text(
             inline_message_id=session["message_id"],
-            text=f"{x_display}\n{o_display}\n\n",
+            text=f"{x_display}\n{o_display}\n\n{board_size_msg}\n{game_mode_msg}\n{get_translation(session['lang'], 'description')}: {description}\n\n",
             reply_markup=keyboard
         )
     else:
         await client.edit_message_text(
             chat_id=session["chat_id"],
             message_id=session["message_id"],
-            text=f"{x_display}\n{o_display}\n\n",
+            text=f"{x_display}\n{o_display}\n\n{board_size_msg}\n{game_mode_msg}\n{get_translation(session['lang'], 'description')}: {description}\n\n",
             reply_markup=keyboard
         )
 
