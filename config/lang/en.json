@@ -47,5 +47,7 @@
   "random_mode_0": "To win, you need to build a cube.\n❌❌\n❌❌",
   "random_mode_1": "To win, you need to build a corner in any direction.\n❌❌\n❌",
   "random_mode_2": "To win, you need to build the letter 'T' in any direction.\n❌❌❌\n✖️❌✖️",
+  "random_mode_3": "To win, you need to form the '+' symbol.\n✖️❌✖️\n❌❌❌\n✖️❌✖️",
+  "random_mode_4": "To win, you need to form the 'x' shape.\n❌✖️❌\n✖️❌✖️\n❌✖️❌",
   "inline_title": "Play Tic-Tac-Toe!"
 }
