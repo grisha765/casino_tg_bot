@@ -3,7 +3,7 @@ from tictactoe.rules import check_winner
 from config import logging_config
 logging = logging_config.setup_logging(__name__)
 
-async def move_ttt(client, callback_query, session, position: int, session_id: str, get_translation, save_points):
+async def move_ttt(client, callback_query, session, position: int, session_id: str, get_translation, save_points, FloodWait):
     user = callback_query.from_user
 
     if session["next_move"] == "X" and user.id != session["x"]["id"]:
@@ -30,27 +30,27 @@ async def move_ttt(client, callback_query, session, position: int, session_id: s
     logging.debug(f"Session {session_id}: Check winner: {winner}")
     
     if winner == "X":
-        await send_ttt_board(session_id, client, session, get_translation, winner="X", winning_combo=combo)
+        await send_ttt_board(session_id, client, session, get_translation, FloodWait, winner="X", winning_combo=combo)
         del_ttt_board(session_id)
         session["next_move"] = "D"
 
     elif winner == "X wins by points":
-        await send_ttt_board(session_id, client, session, get_translation, winner="X_P", winning_combo=combo)
+        await send_ttt_board(session_id, client, session, get_translation, FloodWait, winner="X_P", winning_combo=combo)
         del_ttt_board(session_id)
         session["next_move"] = "D"
         
     elif winner == "O":
-        await send_ttt_board(session_id, client, session, get_translation, winner="O", winning_combo=combo)
+        await send_ttt_board(session_id, client, session, get_translation, FloodWait, winner="O", winning_combo=combo)
         del_ttt_board(session_id)
         session["next_move"] = "D"
 
     elif winner == "O wins by points":
-        await send_ttt_board(session_id, client, session, get_translation, winner="O_P", winning_combo=combo)
+        await send_ttt_board(session_id, client, session, get_translation, FloodWait, winner="O_P", winning_combo=combo)
         del_ttt_board(session_id)
         session["next_move"] = "D"
         
     elif winner == "draw":
-        await send_ttt_board(session_id, client, session, get_translation, winner="D")
+        await send_ttt_board(session_id, client, session, get_translation, FloodWait, winner="D")
         del_ttt_board(session_id)
         session["next_move"] = "D"
         

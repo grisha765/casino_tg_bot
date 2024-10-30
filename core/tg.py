@@ -142,12 +142,17 @@ async def handle_board_size_selection(client, callback_query):
         logging.debug(f"Session {session_id}: selected board size {size}, mod is selected {sessions[session_id]["game_mode"]}")
     
     sessions[session_id]["board_size"] = size
-    try:
-        await update_buttons(client, session_id, sessions[session_id], callback_query, size, sessions[session_id]["game_mode"], get_translation)
-        await callback_query.answer(f"{get_translation(sessions[session_id]["lang"], "select")} {get_translation(sessions[session_id]["lang"], "board_size").lower()}: {size}x{size}.")
-    except FloodWait as e:
-        logging.warning(f"Flood wait error. Sleeping for {e.value} seconds.")
-        await callback_query.answer(f"Flood wait error. Sleeping for {e.value} seconds.")
+    await update_buttons(
+        client,
+        session_id,
+        sessions[session_id],
+        callback_query,
+        size,
+        sessions[session_id]["game_mode"],
+        get_translation,
+        FloodWait
+    )
+    await callback_query.answer(f"{get_translation(sessions[session_id]["lang"], "select")} {get_translation(sessions[session_id]["lang"], "board_size").lower()}: {size}x{size}.")
 
 @app.on_callback_query(filters.regex(r"^game_mode_(\d+)_([a-zA-Z0-9]+)$"))
 async def handle_game_mode_selection(client, callback_query):
@@ -166,12 +171,15 @@ async def handle_game_mode_selection(client, callback_query):
         return
 
     sessions[session_id]["game_mode"] = mode
-    try:
-        await update_buttons(client, session_id, sessions[session_id], callback_query, sessions[session_id]["board_size"], mode, get_translation)
-        await callback_query.answer(f"{get_translation(sessions[session_id]["lang"], "select")} {get_translation(sessions[session_id]["lang"], "game_mode").lower()}: {get_translation(sessions[session_id]["lang"], f"mode_{mode}").lower()}")
-    except FloodWait as e:
-        logging.warning(f"Flood wait error. Sleeping for {e.value} seconds.")
-        await callback_query.answer(f"Flood wait error. Sleeping for {e.value} seconds.")
+    await update_buttons(client,
+                         session_id,
+                         sessions[session_id],
+                         callback_query,
+                         sessions[session_id]["board_size"],
+                         mode,
+                         get_translation,
+                         FloodWait)
+    await callback_query.answer(f"{get_translation(sessions[session_id]["lang"], "select")} {get_translation(sessions[session_id]["lang"], "game_mode").lower()}: {get_translation(sessions[session_id]["lang"], f"mode_{mode}").lower()}")
 
 def save_points(session_id, x_points=None, o_points=None, combos=None):
     if x_points != None:
@@ -184,11 +192,7 @@ def save_points(session_id, x_points=None, o_points=None, combos=None):
 @app.on_callback_query(filters.regex(r"join_o_([a-zA-Z0-9]+)"))
 async def handle_ttt_join(client, callback_query):
     session_id = callback_query.data.split('_')[-1]
-    try:
-        await join_ttt_o(session_id, sessions, client, callback_query, get_translation, session_cleanup_tasks, random)
-    except FloodWait as e:
-        logging.warning(f"Flood wait error. Sleeping for {e.value} seconds.")
-        await callback_query.answer(f"Flood wait error. Sleeping for {e.value} seconds.")
+    await join_ttt_o(session_id, sessions, client, callback_query, get_translation, session_cleanup_tasks, random, FloodWait)
 
 @app.on_callback_query(filters.regex(r"^([a-zA-Z0-9]+)_(\d+)$"))
 async def handle_ttt_move(client, callback_query):
@@ -196,11 +200,16 @@ async def handle_ttt_move(client, callback_query):
     session_id = str(session_id)
     session = sessions.get(session_id)
     if session != None:
-        try:
-            await move_ttt(client, callback_query, sessions[session_id], int(position), session_id, get_translation, save_points)
-        except FloodWait as e:
-            logging.warning(f"Flood wait error. Sleeping for {e.value} seconds.")
-            await callback_query.answer(f"Flood wait error. Sleeping for {e.value} seconds.")
+        await move_ttt(
+            client,
+            callback_query,
+            sessions[session_id],
+            int(position),
+            session_id,
+            get_translation,
+            save_points,
+            FloodWait
+        )
     else:
         await callback_query.answer(get_translation(callback_query.from_user.language_code, 'complete'))
 

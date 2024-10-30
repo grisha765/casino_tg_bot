@@ -1,4 +1,7 @@
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+import asyncio
+from config import logging_config
+logging = logging_config.setup_logging(__name__)
 
 board_states = {}
 
@@ -9,7 +12,7 @@ def del_ttt_board(session_id):
     if session_id in board_states:
         del board_states[session_id]
 
-async def send_ttt_board(session_id, client, session, get_translation, current_player=None, winner=None, winning_combo=None):
+async def send_ttt_board(session_id, client, session, get_translation, FloodWait, current_player=None, winner=None, winning_combo=None):
     board = board_states[session_id]
     board_size = session["board_size"]
     game_mode = session["game_mode"]
@@ -55,19 +58,27 @@ async def send_ttt_board(session_id, client, session, get_translation, current_p
 
     x_display = f"{get_translation(session['lang'], 'x')} - {x_points}: {x_player}" if session["game_mode"] == 2 or session["game_mode"] == 3 else f"{get_translation(session['lang'], 'x')}: {x_player}"
     o_display = f"{get_translation(session['lang'], 'o')} - {o_points}: {o_player}" if session["game_mode"] == 2 or session["game_mode"] == 3 else f"{get_translation(session['lang'], 'o')}: {o_player}"
-    if session["chat_id"] == None:
-        await client.edit_inline_text(
-            inline_message_id=session["message_id"],
-            text=f"{x_display}\n{o_display}\n\n{board_size_msg}\n{game_mode_msg}\n{get_translation(session['lang'], 'description')}: {description}\n\n",
-            reply_markup=keyboard
-        )
-    else:
-        await client.edit_message_text(
-            chat_id=session["chat_id"],
-            message_id=session["message_id"],
-            text=f"{x_display}\n{o_display}\n\n{board_size_msg}\n{game_mode_msg}\n{get_translation(session['lang'], 'description')}: {description}\n\n",
-            reply_markup=keyboard
-        )
+
+    async def text_edit(client, session, get_translation):
+        if session["chat_id"] == None:
+            await client.edit_inline_text(
+                inline_message_id=session["message_id"],
+                text=f"{x_display}\n{o_display}\n\n{board_size_msg}\n{game_mode_msg}\n{get_translation(session['lang'], 'description')}: {description}\n\n",
+                reply_markup=keyboard
+            )
+        else:
+            await client.edit_message_text(
+                chat_id=session["chat_id"],
+                message_id=session["message_id"],
+                text=f"{x_display}\n{o_display}\n\n{board_size_msg}\n{game_mode_msg}\n{get_translation(session['lang'], 'description')}: {description}\n\n",
+                reply_markup=keyboard
+            )
+    try:
+        await text_edit(client, session, get_translation)
+    except FloodWait as e:
+        logging.warning(f"Session {session_id}: Flood wait error. Sleeping for {e.value} seconds.")
+        await asyncio.sleep(e.value)
+        await text_edit(client, session, get_translation)
 
 async def update_ttt_board(session_id, session, position, symbol, callback_query, get_translation):
     board = board_states.get(session_id)
