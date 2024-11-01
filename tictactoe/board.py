@@ -59,7 +59,7 @@ async def send_ttt_board(session_id, client, session, get_translation, FloodWait
     x_display = f"{get_translation(session['lang'], 'x')} - {x_points}: {x_player}" if session["game_mode"] == 2 or session["game_mode"] == 3 else f"{get_translation(session['lang'], 'x')}: {x_player}"
     o_display = f"{get_translation(session['lang'], 'o')} - {o_points}: {o_player}" if session["game_mode"] == 2 or session["game_mode"] == 3 else f"{get_translation(session['lang'], 'o')}: {o_player}"
 
-    async def text_edit(client, session, get_translation):
+    async def text_edit(client, session, get_translation, keyboard):
         if session["chat_id"] == None:
             await client.edit_inline_text(
                 inline_message_id=session["message_id"],
@@ -74,11 +74,11 @@ async def send_ttt_board(session_id, client, session, get_translation, FloodWait
                 reply_markup=keyboard
             )
     try:
-        await text_edit(client, session, get_translation)
+        await text_edit(client, session, get_translation, keyboard)
     except FloodWait as e:
         logging.warning(f"Session {session_id}: Flood wait error. Sleeping for {e.value} seconds.")
         await asyncio.sleep(e.value)
-        await text_edit(client, session, get_translation)
+        await text_edit(client, session, get_translation, keyboard)
 
 async def update_ttt_board(session_id, session, position, symbol, callback_query, get_translation):
     board = board_states.get(session_id)
