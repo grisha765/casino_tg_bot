@@ -58,7 +58,7 @@ async def move_ttt(client, callback_query, session, position: int, session_id: s
         session["next_move"] = "O" if player_symbol == "X" else "X"
         next_player = "🔴" if session["next_move"] == "O" else "❌"
         logging.debug(f"Session {session_id}: next move {session["next_move"]}")
-        await send_ttt_board(session_id, client, session, get_translation, next_player)
+        await send_ttt_board(session_id, client, session, get_translation, FloodWait, current_player=next_player)
 
 if __name__ == "__main__":
     raise RuntimeError("This module should be run only via main.py")
